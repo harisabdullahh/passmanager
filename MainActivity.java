@@ -1,27 +1,25 @@
 package com.example.passwordmanager;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.hardware.biometrics.BiometricManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.sql.DatabaseMetaData;
 import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity {
 
     databaseHelper myDB;
-    Button btnAdd, btnView;
+    Button btnAdd, btnView, btnView2;
     EditText editText,editWebsite;
     private Executor executor;
     private BiometricPrompt biometricPrompt;
@@ -35,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.editText);
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnView = (Button) findViewById(R.id.btnView);
+        btnView2 = (Button) findViewById(R.id.btnView2);
 
         myDB = new databaseHelper(this);
 
@@ -58,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Biometric Authentication")
                 .setSubtitle("Login using fingerprint")
@@ -77,11 +79,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                biometricPrompt.authenticate(promptInfo);
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setCancelable(true);
+                builder.setTitle("Biometric Authentication Error!");
+
+                if(BiometricManager.BIOMETRIC_SUCCESS == 1)
+                biometricPrompt.authenticate(promptInfo);
+                else
+                    builder.show();
+
+            }
+        });
+        btnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ViewListContents.class);
+                startActivity(intent);
             }
         });
     }
